@@ -8,8 +8,7 @@
       </button>
     </div>
     <Popup :class="{ 'hide':!hide }" 
-           @close="close"
-           v-click-outside="close"/>
+           @close="close" />
   </div>
 </template>
 
@@ -18,7 +17,7 @@ import Popup from "./components/Popup.vue"
 export default {
   name: 'App',
   data: () => ({
-    hide: true
+    hide: false
   }),
 
   methods: {

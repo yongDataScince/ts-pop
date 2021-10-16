@@ -1,6 +1,6 @@
 <template>
   <div class="popup"
-       :style="`max-height: ${476 + 60 * checks.length}px;`">
+       :style="popStyle">
     <div class="popup-container">
       <button class="close-btn" @click="close">
         <i class="icon icon-close"></i>
@@ -52,7 +52,7 @@
             {{ tag.text }}
         </button>
       </div>
-      <button class="btn big-btn normal">
+      <button class="btn big-btn normal add-btn">
         Добавить
       </button>
     </div>
@@ -71,6 +71,12 @@ export default {
     show: false,
     checks: []
   }),
+  computed: {
+    popStyle() {
+      if (window.innerWidth > 480) return `max-height: ${476 + 60 * this.checks.length}px;`
+      else return `max-height: 100%`
+    }
+  },
   methods: {
     choiseTag(id) {
       this.tags.map(t => {
@@ -108,7 +114,10 @@ export default {
   },
   watch: {
     price(e) {
-      if (e != "") this.$children[0].$refs.inp.classList.remove('error')
+      if (e.length == 0) {
+         this.checks = []
+      }
+      else this.$children[0].$refs.inp.classList.remove('error')
     }
   },
   components: {
@@ -177,8 +186,12 @@ export default {
       max-height: 250px;
     }
   }
-  .btn {
+  .add-btn {
     margin-top: 16px;
     width: 100%;
+    @media (max-width: 480px) {
+      margin-top: auto;
+      padding: 12px 0;
+    }
   }
 </style>
