@@ -8,10 +8,11 @@
 }
 
 html, body {
-  width: 100%;
-  height: 100%;
   margin: 0;
-  padding: 0;
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 100%;
 }
 
 .hide {
@@ -108,6 +109,10 @@ html, body {
 
 }
 
+.input-container {
+  width: 100%;
+}
+
 .input {
   width: 100%;
   border: 1px solid #DFE3E6;
@@ -117,6 +122,7 @@ html, body {
   color: #000;
   font-size: 14px;
   line-height: 24px;
+  position: relative;
   &:hover {
     border: 1px solid #000000;
   }
@@ -131,6 +137,10 @@ html, body {
     &::placeholder {
       color: #808080;
     }
+  }
+  &.error {
+    border: 1px solid $main-color;
+    display: block;
   }
 }
 
@@ -172,6 +182,28 @@ html, body {
       background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.5 6C0.5 2.96243 2.96243 0.5 6 0.5H14C17.0376 0.5 19.5 2.96243 19.5 6V14C19.5 17.0376 17.0376 19.5 14 19.5H6C2.96243 19.5 0.5 17.0376 0.5 14V6Z' fill='%23BEC5CC' stroke='%23BEC5CC'/%3E%3Cpath d='M7.45455 13.7015L4.11364 10.2537L3 11.403L7.45455 16L17 6.14925L15.8864 5L7.45455 13.7015Z' fill='white'/%3E%3C/svg%3E");
     }
   }
+}
+
+.error-message {
+  height: 100%;
+  max-height: 0;
+  transition: .2s;
+  opacity: 0;
+  transform: translateY(-10px);
+  z-index: -1;
+}
+
+.input.error + .error-message {
+  display: inline;
+  max-height: 12px;
+  width: 100%;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 10px;
+  line-height: 12px;
+  color: $main-color;
+  opacity: 1;
+  transform: translateY(0px);
 }
 
 .checkbox-label {

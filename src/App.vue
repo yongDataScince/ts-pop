@@ -7,7 +7,9 @@
         Налоговый вычет
       </button>
     </div>
-    <Popup :class="{ 'hide':!hide }" @close="close"/>
+    <Popup :class="{ 'hide':!hide }" 
+           @close="close"
+           v-click-outside="close"/>
   </div>
 </template>
 

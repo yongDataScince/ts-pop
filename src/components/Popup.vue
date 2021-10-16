@@ -1,5 +1,6 @@
 <template>
-  <div class="popup" :class="{ 'open' : show }">
+  <div class="popup"
+       :style="`max-height: ${476 + 60 * checks.length}px;`">
     <div class="popup-container">
       <button class="close-btn" @click="close">
         <i class="icon icon-close"></i>
@@ -10,23 +11,25 @@
         Размер налогового вычета составляет не более 13% от своего официального годового дохода.
       </div>
       <div class="input-group">
-        <label class="input-label" for="price">Ваша зарплата в месяц</label>
-        <input type="text" class="input" id="price" name="price" v-model="price">
+        <Input v-model="price"
+               label="Ваша зарплата в месяц"
+               errorMessage="Поле обязательно для заполнения"
+               name="price"
+               />
         <button class="text-btn" 
-                @click="computeTax" 
-                :disabled="price == ''">
+                @click="computeTax">
           Рассчитать
         </button>
       </div>
       <div class="computed-block"
-           :style="`max-height: ${57 * checks.length}px;`">
+           :style="`max-height: ${60 * checks.length}px;`">
 
         <div class="computed-block__title">Итого можете внести в качестве досрочных:</div>
         <ul class="computed-block__list">
           <li class="computed-block__list--item" 
               v-for="(c, n) in checks"
               :key="n">
-            <input type="checkbox" 
+            <input type="checkbox"
                    :name="`check_${n}`" 
                    :id="`check_${n}`"
                    class="input-checkbox">
@@ -46,7 +49,7 @@
                 v-for="tag in tags"
                 :key="tag.id"
                 @click="choiseTag(tag.id)">
-          {{ tag.text }}
+            {{ tag.text }}
         </button>
       </div>
       <button class="btn big-btn normal">
@@ -57,6 +60,7 @@
 </template>
 
 <script>
+import Input from "./Input.vue"
 export default {
   data: () => ({
     tags: [
@@ -76,29 +80,27 @@ export default {
       })
     },
     computeTax() {
-      this.show = false
-      this.checks = []
-      let formatPrice = this.price.replace(" ", "")
-
-      let pricePerYear = 12 * formatPrice
-
-      let taxPerYear = 0.13 * pricePerYear 
-
-      let sum = 0
-      while (260_000 - sum > taxPerYear) {
-        sum += taxPerYear
-        this.checks.push(taxPerYear)
+      if(this.price == "") this.$children[0].$refs.inp.classList.add('error')
+      else {
+        this.show = false
+        this.checks = []
+        let formatPrice = this.price.replace(" ", "")
+        let pricePerYear = 12 * formatPrice
+        let taxPerYear = 0.13 * pricePerYear 
+        let sum = 0
+        while (260_000 - sum > taxPerYear) {
+          sum += taxPerYear
+          this.checks.push(taxPerYear)
+        }
+        this.checks.push(260_000 - sum)
+        this.show = true
       }
-      this.checks.push(260_000 - sum)
-
-      this.show = true
     },
     close() {
       this.$emit('close')
     },
     declOfNum(number) {  
       let cases = [2, 0, 1, 1, 0, 1];
-      console.log(number, number%10)
       let end = number % 100 == 5 ? "ый" : 
                 ["ый", "ой", "ий", "ый"][ (number%100==3) ? 2 : cases[number%100<5 ? number%100 : 5] ]
       return end
@@ -106,9 +108,11 @@ export default {
   },
   watch: {
     price(e) {
-      this.price = e.replace(/[^\d]+/g,'').replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-      // "₽"
+      if (e != "") this.$children[0].$refs.inp.classList.remove('error')
     }
+  },
+  components: {
+    Input
   }
 }
 </script>
@@ -174,6 +178,7 @@ export default {
     }
   }
   .btn {
+    margin-top: 16px;
     width: 100%;
   }
 </style>
