@@ -1,7 +1,7 @@
 <template>
-  <div class="popup">
+  <div class="popup" :class="{ 'open' : show }">
     <div class="popup-container">
-      <button class="close-btn">
+      <button class="close-btn" @click="close">
         <i class="icon icon-close"></i>
       </button>
       <div class="popup__title">Налоговый вычет</div>
@@ -12,18 +12,27 @@
       <div class="input-group">
         <label class="input-label" for="price">Ваша зарплата в месяц</label>
         <input type="text" class="input" id="price" name="price" v-model="price">
-        <button class="text-btn" @click="showComputes">
+        <button class="text-btn" 
+                @click="computeTax" 
+                :disabled="price == ''">
           Рассчитать
         </button>
       </div>
-      <div class="computed-block" :class="{ show }">
+      <div class="computed-block"
+           :style="`max-height: ${57 * checks.length}px;`">
+
         <div class="computed-block__title">Итого можете внести в качестве досрочных:</div>
         <ul class="computed-block__list">
-          <li class="computed-block__list--item">
-            <input type="checkbox" name="check" class="input-checkbox">
-            <label for="check">
-              78 000 рублей 
-              <span>в 1-ый год</span>
+          <li class="computed-block__list--item" 
+              v-for="(c, n) in checks"
+              :key="n">
+            <input type="checkbox" 
+                   :name="`check_${n}`" 
+                   :id="`check_${n}`"
+                   class="input-checkbox">
+            <label :for="`check_${n}`" class="checkbox-label">
+              {{ c }} рублей 
+              <span class="check-span">в {{ n + 1 }}-{{ declOfNum(n+1) }} год</span>
             </label>
           </li>
         </ul>
@@ -55,7 +64,8 @@ export default {
       {id: 1, isActive: false, text: "Срок"},
     ],
     price: "",
-    show: false
+    show: false,
+    checks: []
   }),
   methods: {
     choiseTag(id) {
@@ -65,8 +75,33 @@ export default {
         t
       })
     },
-    showComputes() {
+    computeTax() {
+      this.show = false
+      this.checks = []
+      let formatPrice = this.price.replace(" ", "")
+
+      let pricePerYear = 12 * formatPrice
+
+      let taxPerYear = 0.13 * pricePerYear 
+
+      let sum = 0
+      while (260_000 - sum > taxPerYear) {
+        sum += taxPerYear
+        this.checks.push(taxPerYear)
+      }
+      this.checks.push(260_000 - sum)
+
       this.show = true
+    },
+    close() {
+      this.$emit('close')
+    },
+    declOfNum(number) {  
+      let cases = [2, 0, 1, 1, 0, 1];
+      console.log(number, number%10)
+      let end = number % 100 == 5 ? "ый" : 
+                ["ый", "ой", "ий", "ый"][ (number%100==3) ? 2 : cases[number%100<5 ? number%100 : 5] ]
+      return end
     }
   },
   watch: {
@@ -84,7 +119,6 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    margin-bottom: 24px;
     .input {
       margin-bottom: 8px;
     }
@@ -96,6 +130,7 @@ export default {
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 40px;
+    margin-top: 20px;
     &__text {
       font-style: normal;
       font-weight: 500;
@@ -119,7 +154,7 @@ export default {
       font-weight: 500;
       font-size: 14px;
       line-height: 24px;
-      margin-bottom: 16px;
+      // margin-bottom: 16px;
     }
 
     &__list {
@@ -127,10 +162,15 @@ export default {
       padding: 0;
       margin: 0;
       list-style: none;
+      &--item {
+        width: 100%;
+        padding: 16px 0;
+        border-bottom: 1px solid #DFE3E6;
+      }
     }
 
     &.show {
-      max-height: 200px;
+      max-height: 250px;
     }
   }
   .btn {

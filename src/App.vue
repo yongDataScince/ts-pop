@@ -7,7 +7,7 @@
         Налоговый вычет
       </button>
     </div>
-    <Popup v-if="hide"/>
+    <Popup :class="{ 'hide':!hide }" @close="close"/>
   </div>
 </template>
 
@@ -22,6 +22,9 @@ export default {
   methods: {
     showPopup() {
       this.hide = true
+    },
+    close() {
+      this.hide = false
     }
   },
 
@@ -38,7 +41,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: .2s;
+    transition: .3s;
     .btn {
       filter: drop-shadow(0px 0px 44px #CFDAE7);
     }
