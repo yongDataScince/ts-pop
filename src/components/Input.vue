@@ -8,6 +8,7 @@
            :name="name" 
            @input="$emit('input', $event.target.value)"
            v-model="value"
+           @keypress.enter="computeTax"
           />
     <div class="error-message">
       {{ errorMessage }}
@@ -34,6 +35,11 @@ export default {
   data: () => ({
     value: ""
   }),
+  methods: {
+    computeTax() {
+      this.$emit('computeTax')
+    }
+  },
   watch: {
     value(e) {
       this.value = e.replace(/[^\d]+/g,'').replace(/\B(?=(\d{3})+(?!\d))/g, " ")

@@ -12,6 +12,7 @@
       </div>
       <div class="input-group">
         <Input v-model="price"
+               @computeTax="computeTax"
                label="Ваша зарплата в месяц"
                errorMessage="Поле обязательно для заполнения"
                name="price"
